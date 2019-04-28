@@ -1,8 +1,29 @@
 import os
+import re
+
+def remove_pipes(sentence):
+	sentence = '.'.join(sentence.split("|"))
+	return sentence
+
+def remove_urls(sentence):
+	# ref: https://www.geeksforgeeks.org/python-check-url-string/
+	sentence = re.sub(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', "", sentence)
+	return sentence
+
+def remove_numbers(sentence):
+	sentence = re.sub(r'\d+', "", sentence)
+	return sentence
+
+def remove_symbols(sentence):
+	sentence = re.sub(r'[^\w]', ' ', sentence)
+	return sentence
+
+def remove_special_chars(sentence):
+	sentence = re.sub(r'[^A-Za-z0-9 ]', ' ', sentence)
+	return sentence
 
 def clean(data):
 	clean_data = ""
-	count = 0
 	for line in data.split("\n"):
 		try:
 			i, d, t = line.split("|", 2)
@@ -10,21 +31,16 @@ def clean(data):
 			print("==> ||" + line + "||\t", end='')
 			print(line.split("|"))
 			continue
-		
-		boolean = False
-		if "|" in t:
-			count += 1
-			boolean = True
-			# print(line)
 
-		t = '.'.join(t.split("|"))
+		# t = remove_pipes(t)
+		t = remove_urls(t)
+		t = remove_numbers(t)
+		# t = remove_symbols(t)
+		t = remove_special_chars(t)
+		
 		line = '|'.join([i, d, t])
 		clean_data += line + "\n"
-		if boolean:
-			# print("\t" + line)
-			boolean = False
 	
-	print("Number of lines with Pipe symbols =", count)
 	return clean_data
 		
 
